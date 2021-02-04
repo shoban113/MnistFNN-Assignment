@@ -1,5 +1,5 @@
 package ai.certifai.training.feedforward;
-
+import org.deeplearning4j.datasets.fetchers.MnistDataFetcher;
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -19,25 +19,24 @@ import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import java.io.IOException;
+import java.util.Stack;
 
-public class MnistFNN {
+public class newMnistFNN {
 
-    final static int seed = 1234;
+    final static int seed = 4321;
     final static int batchSize = 500;
-    final static int epoch = 10;
+    final static int epoch = 1;
 
     public static void main(String[] args) throws IOException {
 
         MnistDataSetIterator trainMnist = new MnistDataSetIterator(batchSize, true, seed);
         MnistDataSetIterator testMnist = new MnistDataSetIterator(batchSize, false, seed);
 
-        //normalisation
         NormalizerMinMaxScaler scaler = new NormalizerMinMaxScaler(0, 1);
         scaler.fit(trainMnist);
         trainMnist.setPreProcessor(scaler);
         testMnist.setPreProcessor(scaler);
 
-        //model config
         MultiLayerConfiguration config = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .updater(new Adam(1e-3))
@@ -66,7 +65,7 @@ public class MnistFNN {
         server.attach(storage);
         model.setListeners(new StatsListener(storage), new ScoreIterationListener(1000));
 
-        for (int i = 0; i <= epoch; i++) {
+        for (int i = 0; i <= epoch; i++){
             model.fit(trainMnist);
         }
 
@@ -76,6 +75,6 @@ public class MnistFNN {
         System.out.println(evalTrain.stats());
         System.out.println(evalTest.stats());
 
-    }
 
+    }
 }
